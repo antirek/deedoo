@@ -1,95 +1,78 @@
+(function() {
 
-// Helpers.
-// --------
+  var graph = new joint.dia.Graph;
 
-function buildGraphFromAdjacencyList(adjacencyList) {
+  var paper = new joint.dia.Paper({
+      el: $('#paper'),
+      width: 650, height: 200, gridSize: 1,
+      model: graph,
+      defaultLink: new joint.dia.Link({
+          attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } }
+      }),
+      validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+          // Prevent linking from input ports.
+          if (magnetS && magnetS.getAttribute('type') === 'input') return false;
+          // Prevent linking from output ports to input ports within one element.
+          if (cellViewS === cellViewT) return false;
+          // Prevent linking to input ports.
+          return magnetT && magnetT.getAttribute('type') === 'input';
+      },
+      validateMagnet: function(cellView, magnet) {
+          // Note that this is the default behaviour. Just showing it here for reference.
+          // Disable linking interaction for magnets marked as passive (see below `.inPorts circle`).
+          return magnet.getAttribute('magnet') !== 'passive';
+      }
+  });
 
-    var elements = [];
-    var links = [];
+  var m1 = new joint.shapes.devs.Model({
+      position: { x: 50, y: 50 },
+      size: { width: 90, height: 90 },
+      inPorts: ['in1','in2'],
+      outPorts: ['out1', 'out2', 'out3'],
+      attrs: {
+          '.label': { text: 'Model', 'ref-x': .4, 'ref-y': .2 },
+          rect: { fill: '#2ECC71' },
+          '.inPorts circle': { fill: '#16A085', magnet: 'passive', type: 'input' },
+          '.outPorts circle': { fill: '#E74C3C', type: 'output' }
+      }
+  });
+  
+  graph.addCell(m1);
+
+  var m2 = m1.clone();
+  m2.translate(300, 0);
+  graph.addCell(m2);
+  m2.attr('.label/text', 'Model 2');
+
+  var link = new joint.shapes.devs.Link({
+     source: {
+       id: m1.id,
+       port: 'out2'
+     },
+     target: {
+       id: m2.id,
+       port: 'in1'
+     },
+     attrs: { 
+        '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } 
+     }
+   });
+
+  var link2 = new joint.shapes.devs.Link({
+     source: {
+       id: m1.id,
+       port: 'out3'
+     },
+     target: {
+       id: m2.id,
+       port: 'in2'
+     },
+     attrs: { 
+        '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } 
+     }
+   });
+
+  graph.addCell(link);
+  graph.addCell(link2);
     
-    _.each(adjacencyList, function(edges, parentElementLabel) {
-        elements.push(makeElement(parentElementLabel));
-
-        _.each(edges, function(childElementLabel) {
-            links.push(makeLink(parentElementLabel, childElementLabel));
-        });
-    });
-
-    // Links must be added after all the elements. This is because when the links
-    // are added to the graph, link source/target
-    // elements must be in the graph already.
-    return elements.concat(links);
-}
-
-function makeLink(parentElementLabel, childElementLabel) {
-
-    return new joint.dia.Link({
-        source: { id: parentElementLabel },
-        target: { id: childElementLabel },
-        attrs: { '.marker-target': { d: 'M 4 0 L 0 2 L 4 4 z' } },
-        smooth: true
-    });
-}
-
-function makeElement(label) {
-
-    var maxLineLength = _.max(label.split('\n'), function(l) { return l.length; }).length;
-
-    // Compute width/height of the rectangle based on the number
-    // of lines in the label and the letter size. 0.6 * letterSize is
-    // an approximation of the monospace font letter width.
-    var letterSize = 8;
-    var width = 2 * (letterSize * (0.6 * maxLineLength + 1));
-    var height = 2 * ((label.split('\n').length + 1) * letterSize);
-
-    return new joint.shapes.basic.Rect({
-        id: label,
-        size: { width: width, height: height },
-        attrs: {
-            text: { text: label, 'font-size': letterSize, 'font-family': 'monospace' },
-            rect: {
-                width: width, height: height,
-                rx: 5, ry: 5,
-                stroke: '#555'
-            }
-        }
-    });
-}
-
-// Main.
-// -----
-
-var graph = new joint.dia.Graph;
-
-var paper = new joint.dia.Paper({
-
-    el: $('#paper'),
-    width: 2000,
-    height: 2000,
-    gridSize: 1,
-    model: graph
-});
-
-// Just give the viewport a little padding.
-V(paper.viewport).translate(20, 20);
-
-//$('#btn-layout').on('click', layout);
-
-function layout() {
-
-    var adjacencyList = {
-      'q': ['b', 'c', 'g'],
-      'b': ['f'],
-      'c': ['e', 'd'],
-      'd': [],
-      'e': [],
-      'f': ['g'],
-      'g': ['e']
-    };
-    
-    var cells = buildGraphFromAdjacencyList(adjacencyList);
-    graph.resetCells(cells);
-    joint.layout.DirectedGraph.layout(graph, { setLinkVertices: false });
-}
-
-layout();
+}())
