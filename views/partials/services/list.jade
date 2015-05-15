@@ -1,0 +1,16 @@
+h3 Сервисы
+button.btn.btn-default(ui-sref="services_create") Добавить
+
+table.table.table-bordered.table-condensed.table-striped
+    thead
+        tr
+            th Название
+            th
+            th
+    tbody
+        tr(ng-repeat="service in services")
+            td {{service.name}}
+            td
+                button.btn(ui-sref="services_update({id:service._id})") Изменить
+            td
+                button.btn.btn-danger(ng-click="delete($index)") Удалить

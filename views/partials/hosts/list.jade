@@ -1,0 +1,16 @@
+h3 Хосты
+button.btn.btn-default(ui-sref="hosts_create") Добавить
+
+table.table.table-bordered.table-condensed.table-striped
+    thead
+        tr
+            th Название
+            th
+            th
+    tbody
+        tr(ng-repeat="host in hosts")
+            td {{host.name}}
+            td
+                button.btn(ui-sref="hosts_update({id:host._id})") Изменить
+            td
+                button.btn.btn-danger(ng-click="delete($index)") Удалить

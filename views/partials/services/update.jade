@@ -1,0 +1,90 @@
+h3 {{service.name}}
+form.form.form-horizontal(name="newServiceForm")
+
+    .form-group
+        label.col-sm-3.control-label(for="name" ) Название
+        .col-sm-9
+            input.form-control(
+            id="name"
+            name="name"
+            type="text"
+            placeholder="Введите название"
+            ng-model="service.name"
+            required
+            )
+    .form-group
+        label.col-sm-3.control-label(for="host_id" ) Хост
+        .col-sm-9
+            select.form-control(
+            id="host_id"
+            name="host_id"
+            ng-model="service.host_id"
+            required
+            )
+                option(ng-repeat="host in hosts" value="{{host._id}}") {{host.name}}
+    .form-group
+        label.col-sm-3.control-label(for="port" ) Порт
+        .col-sm-9
+            input.form-control(
+            id="port"
+            name="port"
+            type="text"
+            placeholder="Введите порт"
+            ng-model="service.port"
+            )
+    h4 Ресурсы
+    a.btn.btn-default(ng-click="addResource()") Добавить
+    .form-group(ng-repeat="resource in service.resources")
+        .col-sm-4
+            input.form-control(
+            type="text"
+            placeholder="Введите название"
+            ng-model="resource.name"
+            required
+            )
+        .col-sm-4
+            input.form-control(
+            type="text"
+            placeholder="Введите логин"
+            ng-model="resource.username"
+            required
+            )
+        .col-sm-3
+            input.form-control(
+            type="text"
+            placeholder="Введите пароль"
+            ng-model="resource.password"
+            required
+            )
+        .col-sm-1
+            button.btn(ng-click="deleteResource($index)")
+                span.glyphicon.glyphicon-remove
+    h4 Зависимости
+    a.btn.btn-default(ng-show="services.length" ng-click="addDependencies()") Добавить
+    .form-group(ng-repeat="dependency in service.dependencies")
+        .col-sm-4
+            select.form-control(
+            ng-model="dependency.service_id"
+            ng-change="serviceChange($index)"
+            required
+            )
+                option(ng-repeat="serv in services" value="{{serv._id}}") {{serv.name}}
+
+        .col-sm-4
+            input.form-control(
+            type="text"
+            placeholder="Введите роль"
+            ng-model="dependency.role"
+            required
+            )
+        .col-sm-3
+            select.form-control(
+            ng-model="dependency.resource_id"
+            required
+            )
+                option(ng-repeat="resource in dependency.service.resources") {{resource.name}}
+        .col-sm-1
+            button.btn(ng-click="deleteDependencies($index)")
+                span.glyphicon.glyphicon-remove
+    hr
+    button.btn.btn-primary.col-sm-offset-3(ng-click="save()" ng-disabled="newServiceForm.$invalid") Создать

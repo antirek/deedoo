@@ -1,0 +1,26 @@
+h3 Добавить Хост
+form.form.form-horizontal(name="newHostForm")
+
+    .form-group
+        label.col-sm-3.control-label(for="name" ) Название
+        .col-sm-9
+            input.form-control(
+            id="name"
+            name="name"
+            type="text"
+            placeholder="Введите название"
+            ng-model="host.name"
+            required
+            )
+    .form-group
+        label.col-sm-3.control-label(for="ip" ) ИП адресс
+        .col-sm-9
+            input.form-control(
+            id="ip"
+            name="ip"
+            type="text"
+            placeholder="Введите ИП"
+            ng-model="host.ip"
+            required
+            )
+    button.btn.btn-primary.col-sm-offset-3( ng-click="save()" ng-disabled="newHostForm.$invalid") Создать
