@@ -37,4 +37,9 @@ angular.module 'bedo'
       templateUrl: '/partials/services/update'
       controller: 'ServicesUpdateController'
 
+  .state
+      name: 'scheme'
+      url: '/scheme'
+      templateUrl: '/partials/scheme/scheme'
+      controller: 'SchemeController'
 ]

@@ -1,8 +1,10 @@
 doctype html
 html(lang='ru')
     head
-        title Bedo
+        title Deedoo
         link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
+        link(rel='stylesheet', href='http://www.jointjs.com/css/joint.all.min.css')
+
         script(src='/bower_components/jquery/dist/jquery.min.js')
         script(src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
         script(src='/bower_components/angular/angular.min.js')
@@ -10,13 +12,16 @@ html(lang='ru')
         script(src='/bower_components/angular-resource/angular-resource.min.js')
         script(src='/bower_components/angular-ui-router/release/angular-ui-router.min.js')
         script(src='/public/js/bedo.min.js')
+        script(src='http://jointjs.com/js/joint.all.min.js')
     body(ng-app="bedo")
         nav.navbar.navbar-default
             .navbar-header
-                a.navbar-brand(ui-sref="main") Bedo
+                a.navbar-brand(ui-sref="main") Deedoo
             ul.nav.navbar-nav
                 li
                     a(ui-sref="hosts") Хосты
                 li
                     a(ui-sref="services") Сервисы
+                li
+                    a(ui-sref="scheme") Схема
         .container(ui-view)

@@ -4,9 +4,11 @@ createRouter = (Model)->
   router = express.Router()
   router.use bodyParser
   router.route '/'
+  
   .get (req, res) ->
     Model.find {}, (err, models) ->
       res.json models
+
   .post (req, res, next) ->
     model = new Model req.body
     model.save (err) ->
