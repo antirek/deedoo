@@ -1,10 +1,10 @@
 (function() {
 
-  var graph = new joint.dia.Graph;
-
-  var paper = new joint.dia.Paper({
+  var Plot = function () {
+    var graph = new joint.dia.Graph;
+    var paper = new joint.dia.Paper({
       el: $('#paper'),
-      width: 650, height: 200, gridSize: 1,
+      width: 1050, height: 600, gridSize: 1,
       model: graph,
       defaultLink: new joint.dia.Link({
           attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } }
@@ -22,57 +22,88 @@
           // Disable linking interaction for magnets marked as passive (see below `.inPorts circle`).
           return magnet.getAttribute('magnet') !== 'passive';
       }
-  });
+    });
 
-  var m1 = new joint.shapes.devs.Model({
+    return {
+      graph: graph
+    }
+  };
+
+  var ObjectId = function(id){ return id };
+
+  var services = [
+    { "__v" : 0, "_id" : ObjectId("5554b696e1f356b9384356f7"), "dependencies" : [ ], "host_id" : "5554b670e1f356b9384356f6", "name" : "db server 1", "port" : "3306", "resources" : [   {   "_id" : ObjectId("5554b696e1f356b9384356f8"),   "password" : "1234",  "username" : "root",  "name" : "main" },  {   "password" : "1234",  "username" : "root",  "name" : "actions",   "_id" : ObjectId("5554b6ade1f356b9384356fa") } ] },
+    { "__v" : 0, "_id" : ObjectId("5554b6dde1f356b9384356fb"), "dependencies" : [   {   "_id" : ObjectId("5554b6dde1f356b9384356fc"),   "resource_id" : "main", "role" : "config",  "service_id" : "5554b696e1f356b9384356f7" } ], "host_id" : "5554b670e1f356b9384356f6", "name" : "pbx", "port" : "3000", "resources" : [ {   "password" : "admin",   "username" : "admin",   "name" : "ami",   "_id" : ObjectId("5554bbe4e1f356b9384356fd") } ] },
+    { "name" : "веб-кабинет", "host_id" : "5554b670e1f356b9384356f6", "port" : "80", "_id" : ObjectId("5554cf9fe1f356b9384356fe"), "dependencies" : [   {   "service_id" : "5554b696e1f356b9384356f7",  "role" : "data",  "resource_id" : "main",   "_id" : ObjectId("5554cf9fe1f356b9384356ff") } ], "resources" : [ ], "__v" : 0 },
+    { "host_id" : "5554b670e1f356b9384356f6", "name" : "dsfdsf", "port" : "dsf", "_id" : ObjectId("55561abc43e49e2755b0ab35"), "dependencies" : [   {   "service_id" : "5554b6dde1f356b9384356fb",  "role" : "1",   "resource_id" : "ami", "_id" : ObjectId("55561abc43e49e2755b0ab36") } ], "resources" : [  {   "name" : "dsfd",  "username" : "dsf",   "password" : "dsfsdfdsf",   "_id" : ObjectId("55561abc43e49e2755b0ab37") } ], "__v" : 0 }
+  ];
+
+
+  var plot = new Plot();
+
+  var createServiceView = function (service) {
+    var resources = service.resources;
+    var dependencies = service.dependencies;
+
+    var max = Math.max(resources.length, dependencies.length);
+
+    var height = (max > 2 ? max : 2) * 50;
+
+    var outPorts = resources.map(function (item) {
+      return item.name;
+    });
+
+    var inPorts = dependencies.map(function (item, i) {
+      return i + 1;
+    })
+
+    var model = new joint.shapes.devs.Model({
+      id: service._id,
       position: { x: 50, y: 50 },
-      size: { width: 90, height: 90 },
-      inPorts: ['in1','in2'],
-      outPorts: ['out1', 'out2', 'out3'],
+      size: { width: 90, height: height },
+      inPorts: inPorts,
+      outPorts: outPorts,
       attrs: {
-          '.label': { text: 'Model', 'ref-x': .4, 'ref-y': .2 },
+          '.label': { text: service.name, 'ref-x': .4, 'ref-y': .1 },
           rect: { fill: '#2ECC71' },
           '.inPorts circle': { fill: '#16A085', magnet: 'passive', type: 'input' },
           '.outPorts circle': { fill: '#E74C3C', type: 'output' }
       }
+    });
+
+    return model;
+  };
+
+  services.map(function (item, i) {
+    var m = createServiceView(item);    
+    plot.graph.addCell(m);
+    m.translate(250 * (i % 4), 120 * parseInt(i / 4));
   });
-  
-  graph.addCell(m1);
 
-  var m2 = m1.clone();
-  m2.translate(300, 0);
-  graph.addCell(m2);
-  m2.attr('.label/text', 'Model 2');
+  services.map(function (service) {
+    var dependencies = service.dependencies;
 
-  var link = new joint.shapes.devs.Link({
-     source: {
-       id: m1.id,
-       port: 'out2'
-     },
-     target: {
-       id: m2.id,
-       port: 'in1'
-     },
-     attrs: { 
-        '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } 
-     }
-   });
+    if (dependencies.length > 0) {
+      dependencies.map(function (dependence, i) {
+        var link = new joint.shapes.devs.Link({
+          source: {
+            id: dependence.service_id,
+            port: dependence.resource_id
+          },
+          target: {
+            id: service._id,
+            port: i + 1
+          },
+          attrs: { 
+            '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z', fill: '#EFEFEF' } 
+          }
+        });
 
-  var link2 = new joint.shapes.devs.Link({
-     source: {
-       id: m1.id,
-       port: 'out3'
-     },
-     target: {
-       id: m2.id,
-       port: 'in2'
-     },
-     attrs: { 
-        '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } 
-     }
-   });
+        link.set('router', { name: 'metro' });
+        plot.graph.addCell(link);
 
-  graph.addCell(link);
-  graph.addCell(link2);
-    
-}())
+      });
+    }
+  });
+
+}());
