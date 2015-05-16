@@ -34,8 +34,9 @@
   var services = [
     { "__v" : 0, "_id" : ObjectId("5554b696e1f356b9384356f7"), "dependencies" : [ ], "host_id" : "5554b670e1f356b9384356f6", "name" : "db server 1", "port" : "3306", "resources" : [   {   "_id" : ObjectId("5554b696e1f356b9384356f8"),   "password" : "1234",  "username" : "root",  "name" : "main" },  {   "password" : "1234",  "username" : "root",  "name" : "actions",   "_id" : ObjectId("5554b6ade1f356b9384356fa") } ] },
     { "__v" : 0, "_id" : ObjectId("5554b6dde1f356b9384356fb"), "dependencies" : [   {   "_id" : ObjectId("5554b6dde1f356b9384356fc"),   "resource_id" : "main", "role" : "config",  "service_id" : "5554b696e1f356b9384356f7" } ], "host_id" : "5554b670e1f356b9384356f6", "name" : "pbx", "port" : "3000", "resources" : [ {   "password" : "admin",   "username" : "admin",   "name" : "ami",   "_id" : ObjectId("5554bbe4e1f356b9384356fd") } ] },
-    { "name" : "веб-кабинет", "host_id" : "5554b670e1f356b9384356f6", "port" : "80", "_id" : ObjectId("5554cf9fe1f356b9384356fe"), "dependencies" : [   {   "service_id" : "5554b696e1f356b9384356f7",  "role" : "data",  "resource_id" : "main",   "_id" : ObjectId("5554cf9fe1f356b9384356ff") } ], "resources" : [ ], "__v" : 0 },
-    { "host_id" : "5554b670e1f356b9384356f6", "name" : "dsfdsf", "port" : "dsf", "_id" : ObjectId("55561abc43e49e2755b0ab35"), "dependencies" : [   {   "service_id" : "5554b6dde1f356b9384356fb",  "role" : "1",   "resource_id" : "ami", "_id" : ObjectId("55561abc43e49e2755b0ab36") } ], "resources" : [  {   "name" : "dsfd",  "username" : "dsf",   "password" : "dsfsdfdsf",   "_id" : ObjectId("55561abc43e49e2755b0ab37") } ], "__v" : 0 }
+    { "__v" : 0, "_id" : ObjectId("55561abc43e49e2755b0ab35"), "dependencies" : [ ], "host_id" : "5554b670e1f356b9384356f6", "name" : "rabbit mq 1", "port" : "4050", "resources" : [   {   "_id" : ObjectId("55561abc43e49e2755b0ab37"),   "password" : "admin",   "username" : "admin",   "name" : "queue_mail" },  {   "password" : "admin",   "username" : "admin",   "name" : "queue_sms",   "_id" : ObjectId("55570869069762412a882623") } ] },
+    { "__v" : 0, "_id" : ObjectId("5554cf9fe1f356b9384356fe"), "dependencies" : [   {   "_id" : ObjectId("5554cf9fe1f356b9384356ff"),   "resource_id" : "main", "role" : "data",  "service_id" : "5554b696e1f356b9384356f7" },  {   "resource_id" : "queue_mail",   "role" : "mail",  "service_id" : "55561abc43e49e2755b0ab35",  "_id" : ObjectId("55570883069762412a882625") },   {   "resource_id" : "queue_sms",  "role" : "sms",   "service_id" : "55561abc43e49e2755b0ab35",  "_id" : ObjectId("55570883069762412a882624") } ], "host_id" : "5554b670e1f356b9384356f6", "name" : "веб-кабинет", "port" : "80", "resources" : [ ] },
+    { "name" : "api", "host_id" : "5554b670e1f356b9384356f6", "port" : "4060", "_id" : ObjectId("555708bf069762412a882626"), "dependencies" : [   {   "service_id" : "5554b696e1f356b9384356f7",  "role" : "config",  "resource_id" : "main",   "_id" : ObjectId("555708bf069762412a882628") },   {   "service_id" : "5554b6dde1f356b9384356fb",  "role" : "realtime access",   "resource_id" : "ami",  "_id" : ObjectId("555708bf069762412a882627") } ], "resources" : [ ], "__v" : 0 }
   ];
 
 
@@ -47,7 +48,7 @@
 
     var max = Math.max(resources.length, dependencies.length);
 
-    var height = (max > 2 ? max : 2) * 50;
+    var height = (max > 2 ? max : 2) * 30;
 
     var outPorts = resources.map(function (item) {
       return item.name;
@@ -64,7 +65,7 @@
       inPorts: inPorts,
       outPorts: outPorts,
       attrs: {
-          '.label': { text: service.name, 'ref-x': .4, 'ref-y': .1 },
+          '.label': { text: service.name, 'ref-x': .5, 'ref-y': .1 },
           rect: { fill: '#2ECC71' },
           '.inPorts circle': { fill: '#16A085', magnet: 'passive', type: 'input' },
           '.outPorts circle': { fill: '#E74C3C', type: 'output' }
