@@ -2,9 +2,12 @@
 
   var Plot = function () {
     var graph = new joint.dia.Graph;
+
+    var $app = $('#paper');
+
     var paper = new joint.dia.Paper({
-      el: $('#paper'),
-      width: 1050, height: 600, gridSize: 1,
+      //el: $('#paper'),
+      width: 1500, height: 900, gridSize: 1,
       model: graph,
       defaultLink: new joint.dia.Link({
           attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } }
@@ -23,6 +26,25 @@
           return magnet.getAttribute('magnet') !== 'passive';
       }
     });
+
+    var paperScroller = new joint.ui.PaperScroller({
+        autoResizePaper: true,
+        padding: 50,
+        paper: paper
+    });
+
+    // Initiate panning when the user grabs the blank area of the paper.
+    paper.on('blank:pointerdown', paperScroller.startPanning);
+
+    paperScroller.$el.css({
+        width: '100%',
+        height: '500'
+    });
+
+    $app.append(paperScroller.render().el);
+
+    // Example of centering the paper.
+    //paperScroller.center();
 
     graph.on('change:position', function(cell) {
 
@@ -156,7 +178,7 @@
           }
         });
 
-        link.set('router', { name: 'metro' });
+        //link.set('router', { name: 'metro' });
         plot.graph.addCell(link);
 
       });
