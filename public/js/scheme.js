@@ -85,7 +85,8 @@
     }
   };
 
-  var ObjectId = function(id){ return id };
+  var ObjectId = function (id) { return id };
+
 
   var services = [
     { "__v" : 0, "_id" : ObjectId("5554b696e1f356b9384356f7"), "dependencies" : [ ], "host_id" : "5554b670e1f356b9384356f6", "name" : "db server 1", "port" : "3306", "resources" : [   {   "_id" : ObjectId("5554b696e1f356b9384356f8"),   "password" : "1234",  "username" : "root",  "name" : "main" },  {   "password" : "1234",  "username" : "root",  "name" : "actions",   "_id" : ObjectId("5554b6ade1f356b9384356fa") } ] },
@@ -108,7 +109,7 @@
       size: { width: 400, height: 300 },
       attrs: { rect: { fill: '#E74C3C' }, text: { text: host.name } }
     });
-    return rect
+    return rect;
   };
 
 
@@ -163,12 +164,24 @@
     return model;
   };
 
-  services.map(function (item, i) {
-    var m = createServiceView(item);
-    var hostView = findHostViewById(item.host_id);
-    hostView.embed(m);
-    plot.graph.addCell(m);
-    m.translate(hostView.position().x+10, hostView.position().y+10);
+  hosts.map(function (host, host_i) {
+    var host_service_i = 0;
+    services.map(function (service, service_i) {
+      if (host._id == service.host_id) {
+        var m = createServiceView(service);
+        var hostView = findHostViewById(service.host_id);
+        hostView.embed(m);
+        plot.graph.addCell(m);
+        
+        m.translate(
+          hostView.position().x + 20 + (host_service_i % 3) * 130, 
+          hostView.position().y + 20 + parseInt(host_service_i / 3) * 100
+        );
+        
+        host_service_i += 1;
+      };
+    });
+
   });
 
   services.map(function (service) {
