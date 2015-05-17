@@ -1,7 +1,7 @@
 (function() {
 
   var Plot = function () {
-    
+
     var graph = new joint.dia.Graph;
 
     var $app = $('#paper');
@@ -108,7 +108,11 @@
         id:  host._id,
         position: { x: 20, y: 20 },
         size: { width: 400, height: 180 },
-        attrs: { rect: { fill: '#E74C3C' }, text: { text: host.name } }
+        attrs: { 
+          rect: { fill: '#EFEFEF' }, 
+          text: { text: host.name, 'ref-x': .1, 'ref-y': .1 },
+          
+        }
       });
       return rect;
     };
@@ -174,7 +178,7 @@
           
           m.translate(
             hostView.position().x + 20 + (host_service_i % 3) * 130, 
-            hostView.position().y + 20 + parseInt(host_service_i / 3) * 100
+            hostView.position().y + 27 + parseInt(host_service_i / 3) * 100
           );
           
           host_service_i += 1;
