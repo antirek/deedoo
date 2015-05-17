@@ -1,6 +1,7 @@
 (function() {
 
   var Plot = function () {
+    
     var graph = new joint.dia.Graph;
 
     var $app = $('#paper');
@@ -106,7 +107,7 @@
       var rect = new joint.shapes.basic.Rect({
         id:  host._id,
         position: { x: 20, y: 20 },
-        size: { width: 400, height: 300 },
+        size: { width: 400, height: 180 },
         attrs: { rect: { fill: '#E74C3C' }, text: { text: host.name } }
       });
       return rect;
@@ -127,8 +128,6 @@
         return item.id == id;
       })[0];
     };
-
-
 
 
     var createServiceView = function (service) {
