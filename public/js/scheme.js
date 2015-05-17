@@ -68,6 +68,18 @@
         // Revert the child position.
         cell.set('position', cell.previous('position'));
     });
+
+    $('#toPNG').on('click', function() {
+
+        var windowFeatures = 'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes';
+        var windowName = _.uniqueId('png_output');
+        var imageWindow = window.open('', windowName, windowFeatures);
+
+        paper.toPNG(function (dataURL) {
+            imageWindow.document.write('<img src="' + dataURL + '"/>');
+          }, { padding: 10 });
+    });
+
     return {
       graph: graph
     }
@@ -143,7 +155,7 @@
       attrs: {
         '.label': { text: service.name, 'ref-x': .5, 'ref-y': .1 },
         rect: { fill: '#2ECC71' },
-        '.inPorts circle': { fill: '#16A085', magnet: 'passive', type: 'input' },
+        '.inPorts circle': { fill: '#16AF85', magnet: 'passive', type: 'input' },
         '.outPorts circle': { fill: '#E74C3C', type: 'output' }
       }
     });
