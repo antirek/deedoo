@@ -10,12 +10,17 @@
 ## Install ##
 
 > git clone
+
 > npm install
+
 > bower install
+
 > gulp
 
 
 ## Run ##
+
 > node app.js
+
 
 open http://localhost:3000
